@@ -91,3 +91,44 @@ print(df[df.Tipo == 'Vídeo'])
 # At first analysis, posts with people has better engagement than those with no one.
 # Posts in campaign also had better engagement
 # On this base, the carrossel had not made difference to improve the brand engagement
+
+# Then, let's cluster by "Tags"
+df.groupby("Tags")["Curtidas"].mean()
+
+# Transforming a tag series in a tag list
+df.Tags = df.Tags.str.split("/")
+df.head()
+
+# Separating a tag series in 1 line for each list element
+df = df.explode('Tags')
+df.head()
+
+# Ordering by likes
+df.groupby("Tags")[["Curtidas", "Comentários"]].mean().sort_values("Curtidas", ascending=False)
+
+# Filtering values without tag
+df[df.Tags.isnull()]
+df.loc[df.Tags.isnull(), "Tags"]
+df.loc[df.Tags.isnull(), "Tags"] = "Sem tag"
+df.groupby("Tags")[["Curtidas", "Comentários"]].mean().sort_values("Curtidas", ascending=False)
+
+# Ignoring these values as costumer orientation
+df.loc[df.Tags == 'Sem tag', "Tags"] = np.nan
+df[df.Tags.isnull()]
+
+# Analysing data by people and tag
+df.groupby(["Pessoas", "Tags"])[["Curtidas", "Comentários"]].mean()
+
+# Analysing by like
+df.groupby(["Pessoas", "Tags"])[["Curtidas", "Comentários"]].mean().sort_values("Curtidas", ascending=False)
+
+# Analysing by campaign and tag
+df.groupby(["Campanhas", "Tags"])[["Curtidas", "Comentários"]].mean().sort_values("Curtidas", ascending=False)
+
+# Conclusions 02
+# Having person's face in the post is a key to engagement.
+# Build campaigns help a lot.
+# The tag "Promotion" had a greater performance than any other tag.
+# Use trend contents also can help, even the trend being of other area.
+# The best manner to show a product is with other person using it,
+# For new brand products it's more important, being almost the double.
